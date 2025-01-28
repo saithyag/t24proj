@@ -1,0 +1,13 @@
+When the batch pods are scaled down, TSA.STATUS is not cleared.
+Rashmi Raju Gowda  •  Nov 29, 2024  •  Technology > Core Infra > System Core (EB)
+      10
+When the batch pods are scaled down, TSA.STATUS and TSA.RUNNING.SERVICE are not cleared in Cloud 2.0.
+In the case of autoscale, we have a cleanup API to clear off the residual TSA.STATUS/T24.SESSION. This API is triggered during the scale-down of the batch pod. 
+
+1) Add the cleanup.sh script in the preimage.tar of the autoscale pod preimage under the path /srv/Temenos/TAFJ/bin.
+  
+
+ 2) Include the below section in the autoscale pod deployment yaml file.
+
+
+ https://basecamp.temenos.com/s/article-detail/a04Vj0000034tDtIAI/when-the-batch-pods-are-scaled-down-tsastatus-is-not-cleared
