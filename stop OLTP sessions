@@ -1,0 +1,30 @@
+Steps to stop OLTP sessions running under autoscale pods.
+
+1. In the batch pod's standalone.xml file (T24AppStd01.xml), set the consumer-window-size=”0” for the below connection factory.
+
+<connection-factory name="InVmConnectionFactory" entries="java:/ConnectionFactory" connectors="in-vm" consumer-window-size="0"/>
+
+<connection-factory name="RemoteConnectionFactory" entries="java:jboss/exported/jms/RemoteConnectionFactory" connectors="http-connector" consumer-window-size="0"/>
+
+<pooled-connection-factory name="activemq-ra" entries="java:/JmsXA_IGNORE
+java:jboss/DefaultJMSConnectionFactory" connectors="in-vm" transaction="xa" consumer-window-size="0"/>
+
+ 
+
+2. Set the OLTP_ACTIVE for this below mentioned MDB inside TAFJJEE_EAR.ear\TAFJJEE_MDB.jar\META-INF\jboss-ejb3.xml           
+
+            <d:delivery>
+
+            <ejb-name>IRISMETADATATransactedMDB</ejb-name>
+
+            <d:active>${env.OLTP_ACTIVE}</d:active>
+
+            </d:delivery>
+
+Note: Set the OLTP_ACTIVE for all MDB's except TAFJPhantomListenerMDB and TafjManagementListener.
+
+3.Add the below property inside JAVA_OPTS  in the deployment YAML file of Autoscale pod.
+
+-name: JAVA_OPTS
+
+value: -Dtemn.tafj.appserver.ejb.warmup='IRISINTProcessingBean=0;AAINTProcessingBean=0;IRISMETADATAProcessingBean=0'
