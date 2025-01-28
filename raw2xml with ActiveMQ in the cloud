@@ -1,0 +1,188 @@
+How To run raw2xml with ActiveMQ in the cloud
+Nandhini Veerasamy  •  Jun 28, 2023  •  Technology > Core Infra > Integration Framework (IF)
+      125
+Please find the step-by-step procedure to build and run the raw2xml pod with ActiveMQ queues in the cloud
+
+Build the raw2xml image.
+
+In the Dockerfile present in the <raw2xml>/cloud/docker/ location, make the below change.
+
+Replace the line “COPY cloud/docker/start.sh *target/${APP_NAME}.jar *${APP_NAME}.jar ${APP_HOME}/” with the below line.
+COPY cloud/docker/start.sh ${APP_NAME}.jar ${APP_HOME}/
+
+ 
+
+              Refer to the sample Dockerfile in the attachment: Dockerfile
+              
+              Execute the below command from <raw2xml> location to build the image:
+
+docker build –t temenos/raw2xml –f cloud/docker/Dockerfile .
+
+
+
+
+Tag and push the image into the registry.
+
+Execute the below commands to tag and push the raw2xml image:
+                     docker tag temenos/raw2xml localhost:5000/raw2xml:dev
+
+docker push localhost:5000/raw2xml:dev
+
+ 
+
+Provide the correct values to connect with the ActiveMQ server in the YAML files.
+
+In the app-env-configmap.yaml file present in the <raw2xml>/cloud/k8s/raw2xml/templates folder, make sure the below properties are added and provided with the correct values as per the ActiveMQ.
+
+
+LOADER PATH value should be “lib/activemq/”
+
+  ERRQUEUE: dynamicQueues/t24IFTestQueue_err
+
+  INQUEUE: dynamicQueues/t24IFTestQueue
+
+  LOADER_PATH: lib/activemq/
+
+  OUTQUEUE: dynamicQueues/TestQueue
+
+  PROVIDER_URL: tcp://L1R583J3:61616
+
+  SECURITY_CREDENTIALS: admin
+
+  SECURITY_PRINCIPAL: admin
+
+  INITIAL_CONTEXT_FACTORY: org.apache.activemq.jndi.ActiveMQInitialContextFactory
+
+  CONNECTION_FACTORY: ConnectionFactory
+
+ 
+
+In the raw2xml-deployment.yaml file present in the <raw2xml>/cloud/k8s/raw2xml/templates folder, make sure all the above properties are defined.
+
+Define the image name which has been tagged and pushed.
+
+spec:
+
+      containers:
+
+        - env:
+
+            - name: ERRQUEUE
+
+              valueFrom:
+
+                configMapKeyRef:
+
+                  key: ERRQUEUE
+
+                  name: app-env
+
+            - name: INQUEUE
+
+              valueFrom:
+
+                configMapKeyRef:
+
+                  key: INQUEUE
+
+                  name: app-env
+
+            - name: LOADER_PATH
+
+              valueFrom:
+
+                configMapKeyRef:
+
+                  key: LOADER_PATH
+
+                  name: app-env
+
+            - name: OUTQUEUE
+
+              valueFrom:
+
+                configMapKeyRef:
+
+                  key: OUTQUEUE
+
+                  name: app-env
+
+            - name: PROVIDER_URL
+
+              valueFrom:
+
+                configMapKeyRef:
+
+                  key: PROVIDER_URL
+
+                  name: app-env
+
+            - name: SECURITY_CREDENTIALS
+
+              valueFrom:
+
+                configMapKeyRef:
+
+                  key: SECURITY_CREDENTIALS
+
+                  name: app-env
+
+            - name: SECURITY_PRINCIPAL
+
+              valueFrom:
+
+                configMapKeyRef:
+
+                  key: SECURITY_PRINCIPAL
+
+                  name: app-env
+
+            - name: INITIAL_CONTEXT_FACTORY
+
+              valueFrom:
+
+                configMapKeyRef:
+
+                  key: INITIAL_CONTEXT_FACTORY
+
+                  name: app-env
+
+            - name: CONNECTION_FACTORY
+
+              valueFrom:
+
+                configMapKeyRef:
+
+                  key: CONNECTION_FACTORY
+
+                  name: app-env
+
+          image: localhost:5000/raw2xml:dev
+
+          name: raw2xml
+
+Please find the sample YAML files in the attachment 
+raw2xml-deployment.yaml and app-env-configmap.yaml files
+
+Perform helm install to create a namespace for raw2xml.
+                      Go to <raw2xml>/cloud/k8s folder and execute following command
+                      
+                      helm install <productname (we can give any name)> raw2xml(folder which helm data is there) –n <namespaceName> --create-namespace
+
+helm install raw2xml raw2xml -n raw2xmldev --create-namespace
+
+ 
+
+
+ 
+
+
+
+
+
+
+Attachments
+raw2xml-deployment.yaml (2 KB)
+app-env-configmap.yaml (0 KB)
+Dockerfile (1 KB)
+
