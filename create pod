@@ -1,0 +1,28 @@
+This document explains how to create the API pod pre-image kit which will not be available with distribution by default. We need to separate the iris components from the app pod image to reduce CPU utilization on the app pod and use IRIS from a separate pod.
+Information in this document is subject to change without notice.
+
+No part of this document may be reproduced or transmitted in any form or by any means, for any purpose, without the express written permission of TEMENOS HEADQUARTERS SA.
+
+© 2022 Temenos Headquarters SA -
+all rights reserved.
+
+ 
+
+Disclaimer: This document only explains how to prepare and create the image kit. It does not include deployment and troubleshooting. Please check with your cloud vendor regarding those steps.
+
+Take a copy of the web image and rename the image name as [preimage-transact-api-R24.6]
+** preimage-transact-api-R24.6 -  the R24 in this name is just a sample. Please use naming format from your release.
+
+
+
+ 
+
+Move irf-provider-container.war and irf-publisher-container.war files from R24>jboss>standalone>deployments to the deployment_extras folder. Below are the initial deployments to create the API pod. 
+Note: Transfer Setting should be selected as [Binary]
+
+
+
+Navigate to the folder where the preimage kit is extracted.
+Execute the docker build command to build the image. For build commands, please get in touch with your Cloud vendor.
+podman build -t  preimage-transact-api-r24.2.6:dlmapi .
+
