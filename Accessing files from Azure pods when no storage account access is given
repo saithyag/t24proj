@@ -1,0 +1,11 @@
+To access files inside an Azure container pod, follow the below steps to access files through SFTP
+
+Copying files from local drive to Azure pod
+
+kubectl cp <pod_name>:<directory>/<file_name> <target_file_name> -n <namespace>
+sftp <username>@<host>:<destination_folder_in_sftp>
+put <file_name_in_container>
+
+Same method to copy files from Azure pod to local drive, but use get instead of put
+
+ 
