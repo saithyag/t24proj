@@ -1,0 +1,7 @@
+Details
+As we know, Transact supports warmup mechanism to cache data during application server starting process, such as static data. This indicates tranactions can read those data from cache even in the first time execution. Therefore, user experience will feel the performance is better. In warmup mechanism, there are 2 modes. One is synchronous mode, which AP server starting process need to wait for warmup completed and usually cause starting time becomes longer. The other is asynchronous mode, and it won’t impact AP server starting process. But the warmup might be not completed when AP server is started.
+
+So how to configure warmup mode? you should set following configurations in TAFJEE_EAR.ear>TAFJ_EJB.jar>META-INF>ejb-jar.xml file:
+
+If you set synchronousWarmup as true, the warmup will go synchronouse mode. In addition, you should set warmupTimeout as well if warmup mode is synchronous because this setting can protect AP server starting process fails due to a long warmup execution.
+
