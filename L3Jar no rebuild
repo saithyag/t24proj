@@ -1,0 +1,34 @@
+Deploy a L3 jar file in current DEV container without rebuild Image for test purpose.
+
+Step 1: Copy L3test.jar to the storage account share folder /shares/tafjud/transact-app/resources/libs/L3lib
+
+Example:
+/shares/tafjud/transact-app/resources/libs/L3lib/L3test.jar
+
+Step 2: From build VM prompt execute command:
+kubectl edit deployment transact-temenos-transact-app -n transact
+
+Comments:  transact-temenos-transact-app it is first part of running app pod reference. E.g. transact-temenos-transact-app-8494864bd5-m7bqg
+
+Under container: tag next 5 lines to be added
+
+containers:
+– command:
+– /bin/sh
+– -c
+– |
+cp /shares/tafjud/transact-app/resources/libs/L3lib/L3test.jar /srv/Temenos/T24/Lib/L3lib/
+
+Step 3: From build VM prompt execute command:
+kubectl edit deployment autoscale-transactbatchservice -n autoscale
+
+Under container: tag next 5 lines to be added
+
+containers:
+– command:
+– /bin/sh
+– -c
+– |
+cp /shares/tafjud/transact-app/resources/libs/L3lib/L3test.jar /srv/Temenos/T24/Lib/L3lib/
+
+L3test.jar will be deployed after app and autoscale pods are restarted.
