@@ -1,0 +1,15 @@
+Details
+TAFJ Database Locking Manager has 2 modes of locking mechanism.
+
+Mode 1: It uses the TAFJ_NONEXISTING_ROWS table.
+Mode 2: It uses the TAFJ HASHLOCKS table.
+For system default, it is mode 1, but this mode will insert many records into TAFJ_NONEXISTING_ROWS during locking and won’t remove those records automatically. Once the table retains massive data, that will lead in critical performance issue. In order to avoid this delimma, system administrators must execute CLEANUP.STALE.ENTRIES utility from backend frequently to delete those records.
+
+However, this approach is not a good solution. The best practice is changing to Mode 2 – Hash Locking Mechanism. To switch on this mode, you should follow the steps below:
+
+Add configuration in tafj.properties
+temn.tafj.jdbc.db.locking.insert.rows.on.demand = false
+Populate this table by running the TAFJ_HOME/dbscripts/<DB flavour>/tafj_hashlock_tab_prepare.sql script. The procedure runs for around 1 to 2 hours depending on the hardware of the database server.
+After switch mode to Mode 2, the performance of locking should be better than Mode 1, and it won’t retain massive data in the database which might cause database becomes slow.
+
+ 
