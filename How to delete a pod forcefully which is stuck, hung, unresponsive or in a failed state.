@@ -1,0 +1,11 @@
+For example: oc delete pod t24app-5f86f44b64-2b45h -n temenos –grace-period=0 –force
+
+The above OpenShift command deletes the pod t24app-5f86f44b64-2b45h from the temenos namespace.
+
+The –grace-period=0 option skips the standard wait time for graceful termination.
+
+The –force flag ensures the pod is forcefully removed, even if it’s unresponsive.
+
+It’s commonly used to clean up pods that are stuck, hung, or in a failed state.
+
+However, force-deleting pods can have side effects, such as loss of logs or unflushed data, so it should be used with caution.
