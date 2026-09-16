@@ -1,0 +1,38 @@
+Details
+More and more clients now run in Cloud containers (PODs).
+
+Although docker-entrypoint can be updated to start up TAFJ Session Monitor in phantom inside PODs, there are two issues :
+
+1. Each POD has to host TAFJ Session Monitor which will use additional POD resource
+
+2. Load Balancer random connect to some POD. It’s difficult to monitor all PODs in one central place
+
+ 
+
+We can configure tafj.properties in pre-image kits to let each POD to send session detail to external VM:
+
+# Enable the TAFJMonitorSession
+
+temn.tafj.runtime.session.monitor.enable=true
+
+# Host name or IP of where is the TAFJMonitorSession
+
+temn.tafj.runtime.session.monitor.host=10.29.9.22
+
+# TCP port of the TAFJMonitorSession
+
+temn.tafj.runtime.session.monitor.port=8377
+
+ 
+
+10.29.9.22 is IP of any VM where TAFJ Session Monitor will be started.
+
+All PODs will connect to the above configured IP and PORT to send TAFJ session detail.
+
+ 
+
+Access below URL to monitor all PODs sessions.
+
+http://10.29.9.22:8370/SessionMonitor
+
+Host shows POD name – t24-app… and autoscale-…
